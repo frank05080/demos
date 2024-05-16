@@ -56,10 +56,11 @@ public:
    * The lifecycletalker/lifecyclenode constructor has the same
    * arguments a regular node.
    */
-  explicit LifecycleTalker(const std::string & node_name, bool intra_process_comms = false)
-  : rclcpp_lifecycle::LifecycleNode(node_name,
-      rclcpp::NodeOptions().use_intra_process_comms(intra_process_comms))
-  {}
+  explicit LifecycleTalker(const std::string &node_name, bool intra_process_comms = false)
+      : rclcpp_lifecycle::LifecycleNode(node_name,
+                                        rclcpp::NodeOptions().use_intra_process_comms(intra_process_comms))
+  {
+  }
 
   /// Callback for walltimer in order to publish the message.
   /**
@@ -77,12 +78,15 @@ public:
     msg->data = "Lifecycle HelloWorld #" + std::to_string(++count);
 
     // Print the current state for demo purposes
-    if (!pub_->is_activated()) {
+    if (!pub_->is_activated())
+    {
       RCLCPP_INFO(
-        get_logger(), "Lifecycle publisher is currently inactive. Messages are not published.");
-    } else {
+          get_logger(), "Lifecycle publisher is currently inactive. Messages are not published.");
+    }
+    else
+    {
       RCLCPP_INFO(
-        get_logger(), "Lifecycle publisher is active. Publishing: [%s]", msg->data.c_str());
+          get_logger(), "Lifecycle publisher is active. Publishing: [%s]", msg->data.c_str());
     }
 
     // We independently from the current state call publish on the lifecycle
@@ -116,7 +120,8 @@ public:
     // available.
     pub_ = this->create_publisher<std_msgs::msg::String>("lifecycle_chatter", 10);
     timer_ = this->create_wall_timer(
-      1s, [this]() {return this->publish();});
+        1s, [this]()
+        { return this->publish(); });
 
     RCLCPP_INFO(get_logger(), "on_configure() is called.");
 
@@ -141,7 +146,7 @@ public:
    * TRANSITION_CALLBACK_ERROR or any uncaught exceptions to "errorprocessing"
    */
   rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn
-  on_activate(const rclcpp_lifecycle::State & state)
+  on_activate(const rclcpp_lifecycle::State &state)
   {
     // The parent class method automatically transition on managed entities
     // (currently, LifecyclePublisher).
@@ -177,7 +182,7 @@ public:
    * TRANSITION_CALLBACK_ERROR or any uncaught exceptions to "errorprocessing"
    */
   rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn
-  on_deactivate(const rclcpp_lifecycle::State & state)
+  on_deactivate(const rclcpp_lifecycle::State &state)
   {
     // The parent class method automatically transition on managed entities
     // (currently, LifecyclePublisher).
@@ -239,7 +244,7 @@ public:
    * TRANSITION_CALLBACK_ERROR or any uncaught exceptions to "errorprocessing"
    */
   rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn
-  on_shutdown(const rclcpp_lifecycle::State & state)
+  on_shutdown(const rclcpp_lifecycle::State &state)
   {
     // In our shutdown phase, we release the shared pointers to the
     // timer and publisher. These entities are no longer available
@@ -278,7 +283,7 @@ private:
  * as a regular node. This means we can spawn a
  * node, give it a name and add it to the executor.
  */
-int main(int argc, char * argv[])
+int main(int argc, char *argv[])
 {
   // force flush of the stdout buffer.
   // this ensures a correct sync of all prints
@@ -290,7 +295,7 @@ int main(int argc, char * argv[])
   rclcpp::executors::SingleThreadedExecutor exe;
 
   std::shared_ptr<LifecycleTalker> lc_node =
-    std::make_shared<LifecycleTalker>("lc_talker");
+      std::make_shared<LifecycleTalker>("lc_talker");
 
   exe.add_node(lc_node->get_node_base_interface());
 

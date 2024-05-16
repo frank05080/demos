@@ -35,6 +35,7 @@ ament_target_dependencies(talker_component
 rclcpp_components_register_nodes(talker_component "composition::Talker")
 set(node_plugins "${node_plugins}composition::Talker;$<TARGET_FILE:talker_component>\n")
 
+
 add_library(listener_component SHARED
   src/listener_component.cpp)
 target_compile_definitions(listener_component
@@ -78,6 +79,8 @@ ament_target_dependencies(client_component
   "rclcpp_components")
 rclcpp_components_register_nodes(client_component "composition::Client")
 set(node_plugins "${node_plugins}composition::Client;$<TARGET_FILE:client_component>\n")
+message(WARNING "node_plugins:\n ${node_plugins}")
+
 
 # since the package installs libraries without exporting them
 # it needs to make sure that the library path is being exported
@@ -98,17 +101,20 @@ ament_target_dependencies(manual_composition
 
 add_executable(linktime_composition
   src/linktime_composition.cpp)
+
 set(libs
   talker_component
   listener_component
   server_component
   client_component)
+
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
   set(libs
     "-Wl,--no-as-needed"
     ${libs}
     "-Wl,--as-needed")
 endif()
+
 target_link_libraries(linktime_composition ${libs})
 ament_target_dependencies(linktime_composition
   "class_loader"
